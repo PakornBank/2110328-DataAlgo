@@ -9,58 +9,33 @@ CP::map_bst<KeyT, MappedT, CompareT> CP::map_bst<KeyT, MappedT, CompareT>::split
     CP::map_bst<KeyT, MappedT, CompareT> result;
 
     node* it = mRoot;
-    node* itResult;
+    node* itResult = NULL;
     // ***careful a-jarn check for new node, delete node or modified node
-    node* itResultPrev = NULL;
-    node* itResultRoot = itResult;
-
-    while (true) {
-        if (!it) {
-            break;
-        }
-
+    while (it) {
         if (compare(it->data.first, val) != -1) {
-            if (!result.mRoot) {
-                if (it->left) {
-                    it->left->parent = it->parent;
-                }
-                if (it->parent) {
-                    it->parent->right = it->left;
-                } else {
-                    mRoot = it->left;
-                }
-                result.mRoot = it;
-                it = it->left;
-                result.mRoot->left = NULL;
-                result.mRoot->parent = NULL;
-                itResult = result.mRoot;
-            } else {
-                if (it->left) {
-                    it->left->parent = it->parent;
-                }
-                if (it->parent) {
-                    it->parent->right = it->left;
-                } else {
-                    mRoot = it->left;
-                }
-                itResult->left = it;
-                it = it->left;
-                itResult->left->left = NULL;
-                itResult->left->parent = itResult;
-                itResult = itResult->left;
+            if (it->left) {
+                it->left->parent = it->parent;
             }
+            if (it->parent) {
+                it->parent->right = it->left;
+            } else {
+                mRoot = it->left;
+            }
+            auto v = it->data.first;
+
+            result.child_link(itResult, v) = it;
+            it = it->left;
+            result.child_link(itResult, v)->left = NULL;
+            result.child_link(itResult, v)->parent = itResult;
+            itResult = result.child_link(itResult, v);
 
             if (compare(itResult->data.first, val) == 0) {
                 break;
             }
-        }
-
-        else {
+        } else {
             it = it->right;
         }
     }
-
     return result;
 }
-
 #endif
