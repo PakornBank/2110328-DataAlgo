@@ -10,7 +10,7 @@ CP::map_bst<KeyT, MappedT, CompareT> CP::map_bst<KeyT, MappedT, CompareT>::split
 
     node* it = mRoot;
     node* itResult;
-    /// careful a-jarn check new node bruh
+    // ***careful a-jarn check for new node, delete node or modified node
     node* itResultPrev = NULL;
     node* itResultRoot = itResult;
 
@@ -18,37 +18,8 @@ CP::map_bst<KeyT, MappedT, CompareT> CP::map_bst<KeyT, MappedT, CompareT>::split
         if (!it) {
             break;
         }
-        if (compare(it->data.first, val) == 0) {
-            if (!result.mRoot) {
-                if (it->left) {
-                    it->left->parent = it->parent;
-                }
-                if (it->parent) {
-                    it->parent->right = it->left;
-                } else {
-                    mRoot = it->left;
-                }
 
-                it->left = NULL;
-                it->parent = NULL;
-                result.mRoot = it;
-                break;
-            }
-            if (it->left) {
-                it->left->parent = it->parent;
-            }
-            if (it->parent) {
-                it->parent->right = it->left;
-            } else {
-                mRoot = it->left;
-            }
-            it->left = NULL;
-            it->parent = itResult;
-            itResult->left = it;
-            break;
-        }
-
-        else if (compare(it->data.first, val) == 1) {
+        if (compare(it->data.first, val) != -1) {
             if (!result.mRoot) {
                 if (it->left) {
                     it->left->parent = it->parent;
@@ -63,28 +34,29 @@ CP::map_bst<KeyT, MappedT, CompareT> CP::map_bst<KeyT, MappedT, CompareT>::split
                 result.mRoot->left = NULL;
                 result.mRoot->parent = NULL;
                 itResult = result.mRoot;
-                continue;
+            } else {
+                if (it->left) {
+                    it->left->parent = it->parent;
+                }
+                if (it->parent) {
+                    it->parent->right = it->left;
+                } else {
+                    mRoot = it->left;
+                }
+                itResult->left = it;
+                it = it->left;
+                itResult->left->left = NULL;
+                itResult->left->parent = itResult;
+                itResult = itResult->left;
             }
 
-            if (it->left) {
-                it->left->parent = it->parent;
+            if (compare(itResult->data.first, val) == 0) {
+                break;
             }
-            if (it->parent) {
-                it->parent->right = it->left;
-            } else {
-                mRoot = it->left;
-            }
-            itResult->left = it;
-            it = it->left;
-            itResult->left->left = NULL;
-            itResult->left->parent = itResult;
-            itResult = itResult->left;
-            continue;
         }
 
         else {
             it = it->right;
-            continue;
         }
     }
 
