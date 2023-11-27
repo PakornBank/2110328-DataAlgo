@@ -5,11 +5,10 @@ int maxW[25];
 
 unsigned long long maxSum = 0;
 
-int adj[25][25];
-
-void nattee(int cap,
+void nattee(int cap, unordered_map<int, vector<pair<int, int>>>& adj,
             vector<bool>& visited, int curNode, int curSum,
             int goal, bool& found) {
+    // cout << curSum << endl;
     if (curSum == goal) {
         found = true;
         return;
@@ -18,9 +17,9 @@ void nattee(int cap,
         return;
     }
     visited[curNode] = true;
-    for (int i = 0; i < 25; ++i) {
-        if (adj[curNode][i] && !visited[i]) {
-            nattee(cap - maxW[i], visited, i, curSum + adj[curNode][i], goal, found);
+    for (auto i : adj[curNode]) {
+        if (!visited[i.first]) {
+            nattee(cap - maxW[i.first], adj, visited, i.first, curSum + i.second, goal, found);
             if (found) return;
         }
     }
@@ -29,11 +28,10 @@ void nattee(int cap,
 }
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(NULL);
     int n, m;
     cin >> n >> m;
     int k[8];
+    unordered_map<int, vector<pair<int, int>>> adj;
 
     for (auto& i : k) {
         int input;
@@ -43,21 +41,22 @@ int main() {
     for (int i = 0; i < m; ++i) {
         int a, b, w;
         cin >> a >> b >> w;
-        adj[a][b] = adj[b][a] = w;
+        adj[a].push_back({b, w});
+        adj[b].push_back({a, w});
     }
 
-    for (int i = 0; i < n; ++i) {
-        for (int j = 0; j < n; ++j) {
-            maxW[i] = max(maxW[i], adj[i][j]);
+    for (auto i : adj) {
+        for (auto j : i.second) {
+            maxW[i.first] = max(maxW[i.first], j.second);
         }
-        maxSum += maxW[i];
+        maxSum += maxW[i.first];
     }
 
     for (auto i : k) {
         bool found = false;
-        for (int j = 0; j < n; ++j) {
-            vector<bool> visited(25, false);
-            nattee(maxSum - maxW[j], visited, j, 0, i, found);
+        for (auto j : adj) {
+            vector<bool> visited(205, false);
+            nattee(maxSum - maxW[j.first], adj, visited, j.first, 0, i, found);
             if (found) {
                 cout << "YES";
                 break;
