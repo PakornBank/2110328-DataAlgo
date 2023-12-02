@@ -6,9 +6,6 @@ bool dfs(const vector<vector<int>>& vec, int node, int parent, vector<bool>& vis
     if (vec[node].size() > 2) {
         return false;
     }
-    if (vec[node].size() == 0) {
-        return true;
-    }
     for (auto adj : vec[node]) {
         if (adj != parent) {
             if (visited[adj] == true) {  // visited the visited graph
