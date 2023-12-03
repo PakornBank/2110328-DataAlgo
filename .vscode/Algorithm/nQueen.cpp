@@ -8,21 +8,18 @@ bool checkSafe(int n, int col, int row, vector<vector<bool>>& board) {
             return false;
         }
     }
-
     // check upper diagonal
     for (int i = row, j = col; i >= 0 && j >= 0; --i, --j) {
         if (board[i][j]) {
             return false;
         }
     }
-
     // check lower diagonal
     for (int i = row, j = col; i < n && j >= 0; ++i, --j) {
         if (board[i][j]) {
             return false;
         }
     }
-
     return true;
 }
 
